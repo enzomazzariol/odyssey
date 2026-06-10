@@ -1,0 +1,95 @@
+@import url("https://api.fontshare.com/v2/css?f[]=melodrama@400,500,600,700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-space-black: #020308;
+  --color-space-dark: #070b1a;
+  --color-space-blue: #0a1628;
+  --color-accent-blue: #4a9eff;
+  --color-accent-orange: #ff6b35;
+  --color-accent-cyan: #00d4ff;
+  --color-panel-bg: rgba(10, 22, 40, 0.6);
+  --color-panel-border: rgba(74, 158, 255, 0.15);
+
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-heading: "Melodrama", Georgia, serif;
+  --font-mono: var(--font-mono), "SF Mono", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-space-black);
+  color: white;
+}
+
+::selection {
+  background: rgba(74, 158, 255, 0.3);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 158, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* Mission button glow pulse */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(74, 158, 255, 0.08),
+      inset 0 0 20px rgba(74, 158, 255, 0.03);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(74, 158, 255, 0.15),
+      inset 0 0 30px rgba(74, 158, 255, 0.05);
+  }
+}
+
+/* Horizontal scan line on hover */
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Corner bracket decorations */
+@keyframes corner-fade-in {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
