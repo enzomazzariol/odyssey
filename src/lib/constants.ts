@@ -28,3 +28,7 @@ export const SCENE = {
   starCount: 8000,
   starFieldRadius: 300,
 } as const;
+
+export const SOLAR_SYSTEM = {
+  sunRadius: 5,
+} as const;

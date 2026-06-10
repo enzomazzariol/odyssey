@@ -64,6 +64,7 @@ public/textures/        → Planet textures (NASA, WebP format)
 - All client components must have `"use client"` directive
 - Camera animations use GSAP applied via `useFrame` — never React state for per-frame updates
 - Textures: 256px placeholders → 2K default → 8K for planet detail. WebP format, stored in `public/textures/planets/{name}/`
+- Texture source: Solar System Scope (CC BY 4.0) — attribution required in the site footer/credits before public launch
 - Colors defined as CSS theme vars in `globals.css` (`--color-space-black`, `--color-accent-blue`, etc.)
 - No cartoon aesthetics — realistic, minimal, cinematic. Think Interstellar + Apple
 

@@ -49,6 +49,12 @@ body {
   border-radius: 2px;
 }
 
+/* Mission button breathing scale */
+@keyframes button-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
 /* Mission button glow pulse */
 @keyframes glow-pulse {
   0%,

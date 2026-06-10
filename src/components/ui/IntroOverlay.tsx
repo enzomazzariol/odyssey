@@ -46,6 +46,18 @@ export default function IntroOverlay() {
     router.push("/explore");
   }, [setScene, router]);
 
+  useEffect(() => {
+    if (phase !== "ready") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        handleBeginMission();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [phase, handleBeginMission]);
+
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
       <AnimatePresence mode="wait">
@@ -75,9 +87,9 @@ export default function IntroOverlay() {
             <div className="flex flex-col items-center gap-4">
               <motion.span
                 initial={{ opacity: 0, letterSpacing: "0.4em" }}
-                animate={{ opacity: 0.4, letterSpacing: "0.6em" }}
+                animate={{ opacity: 0.7, letterSpacing: "0.6em" }}
                 transition={{ duration: 2.5, ease: [0.25, 0.1, 0.25, 1] }}
-                className="text-[10px] sm:text-xs uppercase text-white/40"
+                className="text-xs sm:text-sm uppercase text-white/70"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 Welcome to
@@ -107,31 +119,40 @@ export default function IntroOverlay() {
                 <motion.div
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="pointer-events-auto"
+                  transition={{ duration: 1.2, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="pointer-events-auto flex flex-col items-center gap-6"
                 >
                   <button
                     onClick={handleBeginMission}
-                    className="group relative cursor-pointer px-12 py-4 bg-transparent"
+                    className="group relative cursor-pointer px-14 py-5 bg-transparent"
+                    style={{ animation: "button-breathe 3s ease-in-out infinite" }}
                   >
-                    {/* Outer glow */}
+                    {/* Ambient glow behind button */}
                     <div
-                      className="absolute inset-0 border border-white/[0.12] transition-all duration-700 group-hover:border-accent-blue/40"
+                      className="absolute -inset-4 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"
+                      style={{
+                        background: "radial-gradient(ellipse at center, rgba(74, 158, 255, 0.08) 0%, transparent 70%)",
+                      }}
+                    />
+
+                    {/* Outer border with glow */}
+                    <div
+                      className="absolute inset-0 border border-white/20 transition-all duration-700 group-hover:border-accent-blue/50"
                       style={{ animation: "glow-pulse 4s ease-in-out infinite" }}
                     />
 
-                    {/* Corner brackets */}
-                    <div className="absolute -inset-1.5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <svg className="absolute top-0 left-0 w-3 h-3 text-accent-blue/60" viewBox="0 0 12 12">
+                    {/* Corner brackets — always visible, brighter on hover */}
+                    <div className="absolute -inset-2 pointer-events-none transition-opacity duration-500">
+                      <svg className="absolute top-0 left-0 w-3.5 h-3.5 text-white/20 group-hover:text-accent-blue/70 transition-colors duration-500" viewBox="0 0 12 12">
                         <path d="M0 4V0h4" fill="none" stroke="currentColor" strokeWidth="1" />
                       </svg>
-                      <svg className="absolute top-0 right-0 w-3 h-3 text-accent-blue/60" viewBox="0 0 12 12">
+                      <svg className="absolute top-0 right-0 w-3.5 h-3.5 text-white/20 group-hover:text-accent-blue/70 transition-colors duration-500" viewBox="0 0 12 12">
                         <path d="M12 4V0H8" fill="none" stroke="currentColor" strokeWidth="1" />
                       </svg>
-                      <svg className="absolute bottom-0 left-0 w-3 h-3 text-accent-blue/60" viewBox="0 0 12 12">
+                      <svg className="absolute bottom-0 left-0 w-3.5 h-3.5 text-white/20 group-hover:text-accent-blue/70 transition-colors duration-500" viewBox="0 0 12 12">
                         <path d="M0 8v4h4" fill="none" stroke="currentColor" strokeWidth="1" />
                       </svg>
-                      <svg className="absolute bottom-0 right-0 w-3 h-3 text-accent-blue/60" viewBox="0 0 12 12">
+                      <svg className="absolute bottom-0 right-0 w-3.5 h-3.5 text-white/20 group-hover:text-accent-blue/70 transition-colors duration-500" viewBox="0 0 12 12">
                         <path d="M12 8v4H8" fill="none" stroke="currentColor" strokeWidth="1" />
                       </svg>
                     </div>
@@ -139,22 +160,22 @@ export default function IntroOverlay() {
                     {/* Scan line on hover */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div
-                        className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-accent-blue/30 to-transparent"
+                        className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-accent-blue/40 to-transparent"
                         style={{ animation: "scan-line 2.5s ease-in-out infinite" }}
                       />
                     </div>
 
                     {/* Inner fill on hover */}
-                    <div className="absolute inset-0 bg-accent-blue/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute inset-0 bg-accent-blue/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     {/* Text */}
                     <span
-                      className="relative z-10 flex items-center gap-4 text-xs sm:text-sm tracking-[0.35em] uppercase text-white/70 transition-colors duration-500 group-hover:text-white/95"
+                      className="relative z-10 flex items-center gap-4 text-sm sm:text-base tracking-[0.35em] uppercase text-white/80 transition-colors duration-500 group-hover:text-white"
                       style={{ fontFamily: "var(--font-mono)" }}
                     >
-                      Begin the Mission
+                      Begin Mission
                       <svg
-                        className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-70 group-hover:translate-x-0 transition-all duration-500"
+                        className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-80 group-hover:translate-x-0 transition-all duration-500"
                         viewBox="0 0 16 16"
                         fill="none"
                         stroke="currentColor"
@@ -164,6 +185,17 @@ export default function IntroOverlay() {
                       </svg>
                     </span>
                   </button>
+
+                  {/* Spacebar hint */}
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.35 }}
+                    transition={{ duration: 1.5, delay: 1.5 }}
+                    className="text-[10px] tracking-[0.3em] uppercase text-white/35"
+                    style={{ fontFamily: "var(--font-mono)" }}
+                  >
+                    Press Space
+                  </motion.span>
                 </motion.div>
               )}
             </AnimatePresence>
