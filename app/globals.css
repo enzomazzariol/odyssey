@@ -1,4 +1,3 @@
-@import url("https://api.fontshare.com/v2/css?f[]=melodrama@400,500,600,700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -12,14 +11,8 @@
   --color-panel-border: rgba(74, 158, 255, 0.15);
 
   --font-sans: var(--font-body), system-ui, sans-serif;
-  --font-heading: "Melodrama", Georgia, serif;
+  --font-heading: var(--font-melodrama), Georgia, serif;
   --font-mono: var(--font-mono), "SF Mono", monospace;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 html,

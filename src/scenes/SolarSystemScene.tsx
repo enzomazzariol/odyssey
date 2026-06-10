@@ -8,6 +8,7 @@ import StarField from "@/components/three/StarField";
 import Sun from "@/components/three/Sun";
 import Planet from "@/components/three/Planet";
 import OrbitRing from "@/components/three/OrbitRing";
+import AsteroidBelt from "@/components/three/AsteroidBelt";
 import { PLANETS } from "@/data/planets";
 import { CAMERA, TIMING } from "@/lib/constants";
 import { useStore } from "@/store";
@@ -42,7 +43,8 @@ export default function SolarSystemScene() {
       {/* Ambient + faint cool hemisphere fill so planets' night sides stay readable */}
       <ambientLight intensity={0.15} />
       <hemisphereLight args={["#1a2a4a", "#050508", 0.4]} />
-      <Sun />
+      <Sun interactive />
+      <AsteroidBelt />
 
       {PLANETS.map((planet) => (
         <group key={planet.id}>

@@ -22,9 +22,9 @@ export default function OrbitRing({ radius, highlighted = false }: OrbitRingProp
   return (
     <lineLoop geometry={geometry}>
       <lineBasicMaterial
-        color={highlighted ? "#4a9eff" : "#ffffff"}
+        color={highlighted ? "#4a9eff" : "#8fa8c8"}
         transparent
-        opacity={highlighted ? 0.35 : 0.08}
+        opacity={highlighted ? 0.65 : 0.28}
       />
     </lineLoop>
   );

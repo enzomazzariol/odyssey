@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePlanetTexture } from "@/hooks/usePlanetTexture";
 import { SOLAR_SYSTEM } from "@/lib/constants";
+import { useStore } from "@/store";
 
-function makeGlowTexture(): THREE.Texture {
+export function makeGlowTexture(): THREE.Texture {
   const size = 256;
   const canvas = document.createElement("canvas");
   canvas.width = size;
@@ -24,10 +25,12 @@ function makeGlowTexture(): THREE.Texture {
   return texture;
 }
 
-export default function Sun() {
+export default function Sun({ interactive = false }: { interactive?: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const texture = usePlanetTexture("sun");
   const glowTexture = useMemo(makeGlowTexture, []);
+  const setActivePlanet = useStore((s) => s.setActivePlanet);
+  const setHoveredPlanet = useStore((s) => s.setHoveredPlanet);
 
   useFrame((_, delta) => {
     if (meshRef.current) {
@@ -35,9 +38,33 @@ export default function Sun() {
     }
   });
 
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    if (!interactive) return;
+    e.stopPropagation();
+    setActivePlanet("sun");
+  };
+
+  const handleOver = (e: ThreeEvent<PointerEvent>) => {
+    if (!interactive) return;
+    e.stopPropagation();
+    setHoveredPlanet("sun");
+    document.body.style.cursor = "pointer";
+  };
+
+  const handleOut = () => {
+    if (!interactive) return;
+    setHoveredPlanet(null);
+    document.body.style.cursor = "auto";
+  };
+
   return (
     <group>
-      <mesh ref={meshRef}>
+      <mesh
+        ref={meshRef}
+        onClick={handleClick}
+        onPointerOver={handleOver}
+        onPointerOut={handleOut}
+      >
         <sphereGeometry args={[SOLAR_SYSTEM.sunRadius, 64, 64]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>

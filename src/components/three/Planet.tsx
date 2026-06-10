@@ -9,7 +9,7 @@ import { useStore } from "@/store";
 
 const DEG = Math.PI / 180;
 
-function SaturnRings({ planetRadius }: { planetRadius: number }) {
+export function SaturnRings({ planetRadius }: { planetRadius: number }) {
   const texture = usePlanetTexture("saturn", "ring.webp");
 
   const geometry = useMemo(() => {

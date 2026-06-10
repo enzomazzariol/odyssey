@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store";
-import { PLANET_MAP } from "@/data/planets";
+import { CELESTIAL_MAP } from "@/data/planets";
 import PlanetInfoPanel from "@/components/ui/PlanetInfoPanel";
 
 export default function ExplorePage() {
@@ -11,7 +12,7 @@ export default function ExplorePage() {
   const setActivePlanet = useStore((s) => s.setActivePlanet);
   const hoveredPlanet = useStore((s) => s.hoveredPlanet);
   const activePlanet = useStore((s) => s.activePlanet);
-  const hovered = hoveredPlanet ? PLANET_MAP.get(hoveredPlanet) : undefined;
+  const hovered = hoveredPlanet ? CELESTIAL_MAP.get(hoveredPlanet) : undefined;
 
   useEffect(() => {
     setScene("solar-system");
@@ -41,12 +42,22 @@ export default function ExplorePage() {
             System Overview
           </h1>
         </div>
-        <span
-          className="text-[10px] uppercase tracking-[0.3em] text-white/30 mt-1"
-          style={{ fontFamily: "var(--font-mono)" }}
-        >
-          8 planets · 1 star
-        </span>
+        <nav className="pointer-events-auto flex items-center gap-6 mt-1">
+          <Link
+            href="/scale"
+            className="text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-white transition-colors duration-300"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            Scale
+          </Link>
+          <Link
+            href="/compare"
+            className="text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-white transition-colors duration-300"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            Compare
+          </Link>
+        </nav>
       </motion.header>
 
       {/* Hovered planet label */}

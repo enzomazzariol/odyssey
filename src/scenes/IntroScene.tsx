@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import StarField from "@/components/three/StarField";
+import ShootingStars from "@/components/three/ShootingStars";
 
 export default function IntroScene() {
   const groupRef = useRef<THREE.Group>(null);
@@ -19,6 +20,7 @@ export default function IntroScene() {
   return (
     <group ref={groupRef}>
       <StarField />
+      <ShootingStars />
       <ambientLight intensity={0.1} />
     </group>
   );

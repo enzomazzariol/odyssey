@@ -5,12 +5,17 @@ export interface PlanetFacts {
   yearLength: string;
   avgTemp: string;
   moons: number;
+  /** Surface gravity in m/s² */
+  gravity: number;
   description: string;
 }
+
+export type PlanetClassification = "Terrestrial" | "Gas Giant" | "Ice Giant" | "Star";
 
 export interface PlanetData {
   id: string;
   name: string;
+  classification: PlanetClassification;
   /** Scene radius in world units (stylized, not to scale) */
   radius: number;
   /** Orbit radius in world units (stylized, not to scale) */
@@ -27,4 +32,6 @@ export interface PlanetData {
   accentColor: string;
   hasRings: boolean;
   facts: PlanetFacts;
+  /** Short, surprising educational facts shown in detail view */
+  funFacts: string[];
 }

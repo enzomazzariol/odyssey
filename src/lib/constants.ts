@@ -32,3 +32,11 @@ export const SCENE = {
 export const SOLAR_SYSTEM = {
   sunRadius: 5,
 } as const;
+
+export const PLANET_DETAIL = {
+  heroRadius: 3,
+  cameraPosition: [0, 0.6, 8.5] as const,
+  // Camera snaps here before the mini-approach when switching planets within detail view
+  reapproachPosition: [0, 3, 16] as const,
+  approachDuration: 2.4,
+} as const;
