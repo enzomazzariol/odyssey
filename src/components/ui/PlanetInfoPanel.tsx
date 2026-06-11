@@ -4,6 +4,14 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store";
 import { CELESTIAL_MAP, getBodyStats } from "@/data/planets";
+import {
+  useLang,
+  useT,
+  localizedDescription,
+  localizedFunFacts,
+  localizedClassification,
+} from "@/i18n";
+import { audio } from "@/lib/audio";
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -25,6 +33,8 @@ function Stat({ label, value, accent }: { label: string; value: string; accent: 
 
 export default function PlanetInfoPanel() {
   const router = useRouter();
+  const lang = useLang();
+  const t = useT();
   const activePlanet = useStore((s) => s.activePlanet);
   const setActivePlanet = useStore((s) => s.setActivePlanet);
   const planet = activePlanet ? CELESTIAL_MAP.get(activePlanet) : undefined;
@@ -99,7 +109,7 @@ export default function PlanetInfoPanel() {
                     className="text-[11px] uppercase tracking-[0.4em]"
                     style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
                   >
-                    {planet.classification}
+                    {localizedClassification(planet, lang)}
                   </span>
                 </div>
                 <h2
@@ -116,7 +126,7 @@ export default function PlanetInfoPanel() {
                 className="text-[15px] leading-relaxed text-white/60 font-light"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                {planet.facts.description}
+                {localizedDescription(planet, lang)}
               </p>
 
               {/* Size vs Earth */}
@@ -126,7 +136,7 @@ export default function PlanetInfoPanel() {
                     className="text-[11px] uppercase tracking-[0.25em] text-white/55"
                     style={{ fontFamily: "var(--font-mono)" }}
                   >
-                    Size vs Earth
+                    {t("sizeVsEarth")}
                   </span>
                   <span
                     className="text-xs tracking-[0.1em]"
@@ -150,7 +160,7 @@ export default function PlanetInfoPanel() {
 
               {/* Stats grid */}
               <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6">
-                {getBodyStats(planet)
+                {getBodyStats(planet, lang)
                   .slice(0, 6)
                   .map((stat) => (
                     <Stat
@@ -171,18 +181,21 @@ export default function PlanetInfoPanel() {
                   className="text-[11px] uppercase tracking-[0.3em]"
                   style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
                 >
-                  Did you know
+                  {t("didYouKnow")}
                 </span>
                 <p
                   className="mt-2 text-[15px] leading-relaxed text-white/75 font-light"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
-                  {planet.funFacts[0]}
+                  {localizedFunFacts(planet, lang)[0]}
                 </p>
               </div>
 
               <button
-                onClick={() => router.push(`/explore/${planet.id}`)}
+                onClick={() => {
+                  audio.whoosh();
+                  router.push(`/explore/${planet.id}`);
+                }}
                 className="group mt-7 w-full relative flex items-center justify-center gap-3 py-4 cursor-pointer overflow-hidden border transition-all duration-500"
                 style={{ borderColor: `${planet.accentColor}40` }}
               >
@@ -194,7 +207,7 @@ export default function PlanetInfoPanel() {
                   className="relative text-xs uppercase tracking-[0.35em] text-white/75 group-hover:text-white transition-colors duration-300"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >
-                  Initiate Approach
+                  {t("initiateApproach")}
                 </span>
                 <svg
                   className="relative w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300"

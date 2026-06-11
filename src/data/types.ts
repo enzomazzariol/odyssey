@@ -10,7 +10,7 @@ export interface PlanetFacts {
   description: string;
 }
 
-export type PlanetClassification = "Terrestrial" | "Gas Giant" | "Ice Giant" | "Star";
+export type PlanetClassification = "Terrestrial" | "Gas Giant" | "Ice Giant" | "Star" | "Dwarf Planet";
 
 export interface PlanetData {
   id: string;
@@ -30,6 +30,8 @@ export interface PlanetData {
   initialAngle: number;
   /** Accent color used for UI highlights and orbit hover */
   accentColor: string;
+  /** Optional color multiply over the surface texture (e.g. Pluto reuses a tinted Moon map) */
+  tint?: string;
   hasRings: boolean;
   facts: PlanetFacts;
   /** Short, surprising educational facts shown in detail view */

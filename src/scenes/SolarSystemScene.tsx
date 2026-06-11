@@ -9,7 +9,8 @@ import Sun from "@/components/three/Sun";
 import Planet from "@/components/three/Planet";
 import OrbitRing from "@/components/three/OrbitRing";
 import AsteroidBelt from "@/components/three/AsteroidBelt";
-import { PLANETS } from "@/data/planets";
+import Comet from "@/components/three/Comet";
+import { PLANETS, PLUTO } from "@/data/planets";
 import { CAMERA, TIMING } from "@/lib/constants";
 import { useStore } from "@/store";
 
@@ -53,13 +54,20 @@ export default function SolarSystemScene() {
         </group>
       ))}
 
+      {/* Easter eggs: Pluto on its inclined orbit, and a wandering comet */}
+      <group rotation={[0.3, 0, 0.1]}>
+        <OrbitRing radius={PLUTO.orbitRadius} highlighted={hoveredPlanet === "pluto"} />
+        <Planet data={PLUTO} />
+      </group>
+      <Comet />
+
       <OrbitControls
         enabled={!isAnimating}
         enablePan={false}
         enableDamping
         dampingFactor={0.05}
         minDistance={10}
-        maxDistance={140}
+        maxDistance={170}
         maxPolarAngle={Math.PI * 0.85}
         target={[0, 0, 0]}
       />

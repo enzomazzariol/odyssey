@@ -14,6 +14,14 @@ export interface SceneSlice {
   /** Body ids being compared in compare mode */
   compareA: string;
   compareB: string;
+  /** Orbit simulation speed multiplier (0 = paused) */
+  timeScale: number;
+  /** Bumped when user requests real planet positions for today */
+  todayTick: number;
+  /** Moon id with open info card in detail view */
+  activeMoon: string | null;
+  audioMuted: boolean;
+  lang: "en" | "es";
   setScene: (scene: SceneId) => void;
   setActivePlanet: (planet: string | null) => void;
   setHoveredPlanet: (planet: string | null) => void;
@@ -21,6 +29,11 @@ export interface SceneSlice {
   setScaleIndex: (index: number) => void;
   setCompareA: (id: string) => void;
   setCompareB: (id: string) => void;
+  setTimeScale: (scale: number) => void;
+  triggerToday: () => void;
+  setActiveMoon: (moon: string | null) => void;
+  setAudioMuted: (muted: boolean) => void;
+  setLang: (lang: "en" | "es") => void;
 }
 
 export const createSceneSlice: StateCreator<SceneSlice> = (set, get) => ({
@@ -44,4 +57,14 @@ export const createSceneSlice: StateCreator<SceneSlice> = (set, get) => ({
   setScaleIndex: (index) => set({ scaleIndex: index }),
   setCompareA: (id) => set({ compareA: id }),
   setCompareB: (id) => set({ compareB: id }),
+  timeScale: 1,
+  todayTick: 0,
+  activeMoon: null,
+  audioMuted: false,
+  lang: "en",
+  setTimeScale: (scale) => set({ timeScale: scale }),
+  triggerToday: () => set({ todayTick: Date.now(), timeScale: 0 }),
+  setActiveMoon: (moon) => set({ activeMoon: moon }),
+  setAudioMuted: (muted) => set({ audioMuted: muted }),
+  setLang: (lang) => set({ lang }),
 });

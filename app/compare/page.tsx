@@ -4,11 +4,13 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store";
-import { SUN, PLANETS, CELESTIAL_MAP } from "@/data/planets";
+import { SUN, PLANETS, PLUTO, CELESTIAL_MAP, localizeFactValue } from "@/data/planets";
 import type { PlanetData } from "@/data/types";
+import { useLang, useT } from "@/i18n";
+import { UI, type Lang } from "@/i18n/ui";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
-const ALL_BODIES = [SUN, ...PLANETS];
+const ALL_BODIES = [SUN, ...PLANETS, PLUTO];
 
 function BodySelect({
   value,
@@ -57,32 +59,34 @@ interface CompareRow {
   winner: -1 | 0 | 1;
 }
 
-function buildRows(a: PlanetData, b: PlanetData): CompareRow[] {
+function buildRows(a: PlanetData, b: PlanetData, lang: Lang): CompareRow[] {
   const num = (x: number, y: number): -1 | 0 | 1 => (x === y ? 0 : x > y ? 1 : -1);
+  const t = UI[lang];
+  const v = (x: string) => localizeFactValue(x, lang);
   return [
     {
-      label: "Radius",
+      label: t.rowRadius,
       a: `${a.facts.radiusKm.toLocaleString()} km`,
       b: `${b.facts.radiusKm.toLocaleString()} km`,
       winner: num(a.facts.radiusKm, b.facts.radiusKm),
     },
     {
-      label: "Distance from Sun",
+      label: t.rowDistance,
       a: a.facts.distanceFromSunMkm ? `${a.facts.distanceFromSunMkm.toLocaleString()} M km` : "—",
       b: b.facts.distanceFromSunMkm ? `${b.facts.distanceFromSunMkm.toLocaleString()} M km` : "—",
       winner: num(a.facts.distanceFromSunMkm, b.facts.distanceFromSunMkm),
     },
-    { label: "Day length", a: a.facts.dayLength, b: b.facts.dayLength, winner: 0 },
-    { label: "Year length", a: a.facts.yearLength, b: b.facts.yearLength, winner: 0 },
-    { label: "Avg temperature", a: a.facts.avgTemp, b: b.facts.avgTemp, winner: 0 },
+    { label: t.rowDay, a: v(a.facts.dayLength), b: v(b.facts.dayLength), winner: 0 },
+    { label: t.rowYear, a: v(a.facts.yearLength), b: v(b.facts.yearLength), winner: 0 },
+    { label: t.rowTemp, a: v(a.facts.avgTemp), b: v(b.facts.avgTemp), winner: 0 },
     {
-      label: "Gravity",
+      label: t.rowGravity,
       a: `${a.facts.gravity} m/s²`,
       b: `${b.facts.gravity} m/s²`,
       winner: num(a.facts.gravity, b.facts.gravity),
     },
     {
-      label: "Moons",
+      label: t.rowMoons,
       a: String(a.facts.moons),
       b: String(b.facts.moons),
       winner: num(a.facts.moons, b.facts.moons),
@@ -96,6 +100,8 @@ export default function ComparePage() {
   const compareB = useStore((s) => s.compareB);
   const setCompareA = useStore((s) => s.setCompareA);
   const setCompareB = useStore((s) => s.setCompareB);
+  const lang = useLang();
+  const t = useT();
 
   useEffect(() => {
     setScene("compare");
@@ -133,20 +139,20 @@ export default function ComparePage() {
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">{t("systemOverview")}</span>
         </Link>
         <div className="flex flex-col items-end gap-1">
           <span
             className="text-[10px] uppercase tracking-[0.4em] text-white/40"
             style={{ fontFamily: "var(--font-mono)" }}
           >
-            Solar Odyssey
+            {t("solarOdyssey")}
           </span>
           <h1
             className="text-lg font-light tracking-[0.25em] uppercase text-white/90"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Compare
+            {t("compare")}
           </h1>
         </div>
       </motion.header>
@@ -163,7 +169,7 @@ export default function ComparePage() {
           className="text-[12px] uppercase tracking-[0.3em] text-white/50"
           style={{ fontFamily: "var(--font-mono)" }}
         >
-          vs
+          {t("vs")}
         </span>
         <BodySelect value={compareB} onChange={setCompareB} exclude={compareA} accent={b.accentColor} />
       </motion.div>
@@ -181,13 +187,13 @@ export default function ComparePage() {
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {factor < 1.05 ? (
-              <>Nearly identical in size</>
+              <>{t("nearlyIdentical")}</>
             ) : (
               <>
                 <span style={{ color: bigger.accentColor }}>{bigger.name}</span>
-                {" is "}
+                {` ${t("isWord")} `}
                 <span className="text-white/80">{factor >= 10 ? factor.toFixed(0) : factor.toFixed(1)}×</span>
-                {" wider than "}
+                {` ${t("widerThan")} `}
                 <span style={{ color: smaller.accentColor }}>{smaller.name}</span>
               </>
             )}
@@ -222,7 +228,7 @@ export default function ComparePage() {
         className="fixed bottom-0 inset-x-0 z-20 px-6 pb-6 flex justify-center pointer-events-none"
       >
         <div className="w-full max-w-3xl border-t border-white/10 pt-4 bg-gradient-to-t from-space-black/60 to-transparent">
-          {buildRows(a, b).map((row) => (
+          {buildRows(a, b, lang).map((row) => (
             <div
               key={row.label}
               className="grid grid-cols-[1fr_auto_1fr] items-baseline gap-6 py-2"

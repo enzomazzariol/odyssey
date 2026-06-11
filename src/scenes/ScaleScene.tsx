@@ -6,7 +6,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 import StarField from "@/components/three/StarField";
 import { SaturnRings } from "@/components/three/Planet";
-import { makeGlowTexture } from "@/components/three/Sun";
+import { makeGlowTexture, SUN_BLOOM_COLOR } from "@/components/three/Sun";
 import { usePlanetTexture } from "@/hooks/usePlanetTexture";
 import { SCALE_BODIES, scaleCameraFor, type ScaleBodyLayout } from "@/lib/scaleLayout";
 import { useStore } from "@/store";
@@ -30,7 +30,7 @@ function ScaleBody({ layout }: { layout: ScaleBodyLayout }) {
       <mesh ref={meshRef}>
         <sphereGeometry args={[layout.radius, 64, 64]} />
         {isSun ? (
-          <meshBasicMaterial map={texture} toneMapped={false} />
+          <meshBasicMaterial map={texture} color={SUN_BLOOM_COLOR} toneMapped={false} />
         ) : (
           <meshStandardMaterial map={texture} roughness={0.92} metalness={0} />
         )}

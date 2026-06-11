@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store";
 import { SCALE_BODIES } from "@/lib/scaleLayout";
+import { useLang, useT, localizedClassification } from "@/i18n";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 const EARTH_RADIUS_KM = 6371;
@@ -15,6 +16,8 @@ export default function ScalePage() {
   const setScaleIndex = useStore((s) => s.setScaleIndex);
   const isAnimating = useStore((s) => s.isAnimating);
   const wheelAccum = useRef(0);
+  const lang = useLang();
+  const t = useT();
 
   useEffect(() => {
     setScene("scale");
@@ -43,11 +46,28 @@ export default function ScalePage() {
       if (e.key === "ArrowRight" || e.key === "ArrowDown") step(1);
       if (e.key === "ArrowLeft" || e.key === "ArrowUp") step(-1);
     };
+    let touchX = 0;
+    let touchY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      touchX = e.touches[0].clientX;
+      touchY = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (isAnimating) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      const dy = e.changedTouches[0].clientY - touchY;
+      const d = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+      if (Math.abs(d) > 50) step(d < 0 ? 1 : -1);
+    };
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
     };
   }, [isAnimating, step]);
 
@@ -56,10 +76,10 @@ export default function ScalePage() {
   const ratio = body.facts.radiusKm / EARTH_RADIUS_KM;
   const ratioLabel =
     body.id === "earth"
-      ? "Reference body"
+      ? t("referenceBody")
       : ratio >= 1
-        ? `${ratio >= 10 ? ratio.toFixed(0) : ratio.toFixed(1)}× Earth's radius`
-        : `${(1 / ratio).toFixed(1)}× smaller than Earth`;
+        ? `${ratio >= 10 ? ratio.toFixed(0) : ratio.toFixed(1)}${t("earthRadiusSuffix")}`
+        : `${(1 / ratio).toFixed(1)}${t("smallerThanEarth")}`;
 
   return (
     <>
@@ -84,20 +104,20 @@ export default function ScalePage() {
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">{t("systemOverview")}</span>
         </Link>
         <div className="flex flex-col items-end gap-1">
           <span
             className="text-[10px] uppercase tracking-[0.4em] text-white/40"
             style={{ fontFamily: "var(--font-mono)" }}
           >
-            Solar Odyssey
+            {t("solarOdyssey")}
           </span>
           <h1
             className="text-lg font-light tracking-[0.25em] uppercase text-white/90"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            True Scale
+            {t("trueScale")}
           </h1>
         </div>
       </motion.header>
@@ -117,7 +137,7 @@ export default function ScalePage() {
               className="text-[11px] uppercase tracking-[0.4em]"
               style={{ fontFamily: "var(--font-mono)", color: body.accentColor }}
             >
-              {body.classification}
+              {localizedClassification(body, lang)}
             </span>
             <h2
               className="text-4xl font-light tracking-[0.25em] uppercase text-white"
@@ -194,10 +214,10 @@ export default function ScalePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}
         transition={{ duration: 1, delay: 2.5 }}
-        className="fixed bottom-8 right-8 z-20 text-[11px] uppercase tracking-[0.3em] text-white/45 pointer-events-none hidden md:block"
+        className="fixed bottom-8 right-32 z-20 text-[11px] uppercase tracking-[0.3em] text-white/45 pointer-events-none hidden md:block"
         style={{ fontFamily: "var(--font-mono)" }}
       >
-        Scroll to travel
+        {t("scrollToTravel")}
       </motion.span>
     </>
   );

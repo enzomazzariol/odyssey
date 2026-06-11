@@ -2,16 +2,18 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import StarField from "@/components/three/StarField";
 import { SaturnRings } from "@/components/three/Planet";
-import { makeGlowTexture } from "@/components/three/Sun";
+import Atmosphere from "@/components/three/Atmosphere";
+import { makeGlowTexture, SUN_BLOOM_COLOR } from "@/components/three/Sun";
 import { usePlanetTexture } from "@/hooks/usePlanetTexture";
 import { CELESTIAL_MAP } from "@/data/planets";
 import type { PlanetData } from "@/data/types";
 import { PLANET_DETAIL } from "@/lib/constants";
+import { audio } from "@/lib/audio";
 import { useStore } from "@/store";
 
 const DEG = Math.PI / 180;
@@ -40,19 +42,51 @@ function EarthClouds({ radius }: { radius: number }) {
   );
 }
 
-function Moon({ planetRadius }: { planetRadius: number }) {
+interface MoonSpec {
+  id: string;
+  name: string;
+  /** Radius as a fraction of the hero planet radius */
+  radiusF: number;
+  /** Orbit radius as a multiple of the hero planet radius */
+  orbitF: number;
+  /** Orbit speed, rad/s */
+  speed: number;
+  /** Tint over the shared cratered moon texture */
+  color: string;
+  initialAngle: number;
+}
+
+/** Famous moons shown while orbiting their planet in detail view */
+const DETAIL_MOONS: Record<string, MoonSpec[]> = {
+  earth: [
+    { id: "moon", name: "Moon", radiusF: 0.27, orbitF: 1.65, speed: 0.12, color: "#ffffff", initialAngle: 0 },
+  ],
+  jupiter: [
+    { id: "io", name: "Io", radiusF: 0.1, orbitF: 1.5, speed: 0.22, color: "#e8cf7a", initialAngle: 0.8 },
+    { id: "europa", name: "Europa", radiusF: 0.088, orbitF: 1.95, speed: 0.15, color: "#d9c6ad", initialAngle: 3.6 },
+  ],
+  saturn: [
+    { id: "enceladus", name: "Enceladus", radiusF: 0.06, orbitF: 2.45, speed: 0.16, color: "#f4f4f4", initialAngle: 2.2 },
+    { id: "titan", name: "Titan", radiusF: 0.145, orbitF: 2.8, speed: 0.1, color: "#e0a04f", initialAngle: 5 },
+  ],
+};
+
+function MoonBody({ spec, planetRadius }: { spec: MoonSpec; planetRadius: number }) {
   const orbitRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
-  const texture = usePlanetTexture("moon", ["2k.webp", "8k.webp"]);
-  // Tight enough to stay inside the detail camera frame
-  const orbitRadius = planetRadius * 1.65;
+  const texture = usePlanetTexture("moon", "2k.webp");
+  const orbitRadius = planetRadius * spec.orbitF;
+  const radius = planetRadius * spec.radiusF;
+  const angleRef = useRef(spec.initialAngle);
+  const setActiveMoon = useStore((s) => s.setActiveMoon);
 
-  useFrame(({ clock }, delta) => {
-    const angle = clock.getElapsedTime() * 0.12;
+  useFrame((_, delta) => {
+    angleRef.current += delta * spec.speed;
+    const angle = angleRef.current;
     if (orbitRef.current) {
       orbitRef.current.position.set(
         Math.cos(angle) * orbitRadius,
-        Math.sin(angle * 0.4) * 0.5,
+        Math.sin(angle * 0.4) * 0.4,
         Math.sin(angle) * orbitRadius
       );
     }
@@ -63,13 +97,73 @@ function Moon({ planetRadius }: { planetRadius: number }) {
 
   return (
     <group ref={orbitRef}>
-      <mesh ref={meshRef}>
-        <sphereGeometry args={[planetRadius * 0.27, 48, 48]} />
-        <meshStandardMaterial map={texture} roughness={0.95} metalness={0} />
+      <mesh
+        ref={meshRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          audio.click();
+          setActiveMoon(spec.id);
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          audio.hover();
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = "auto";
+        }}
+      >
+        <sphereGeometry args={[radius, 48, 48]} />
+        <meshStandardMaterial map={texture} color={spec.color} roughness={0.95} metalness={0} />
       </mesh>
+      <Html
+        center
+        position={[0, -(radius + 0.3), 0]}
+        style={{ pointerEvents: "none", userSelect: "none" }}
+        zIndexRange={[5, 0]}
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.55)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {spec.name}
+        </span>
+      </Html>
     </group>
   );
 }
+
+/** Day texture + city lights on the night side (emissive map) */
+function EarthMaterial({ map }: { map: THREE.Texture }) {
+  const night = usePlanetTexture("earth", "night.webp");
+  return (
+    <meshStandardMaterial
+      map={map}
+      roughness={0.92}
+      metalness={0}
+      emissiveMap={night}
+      emissive="#ffd9a0"
+      emissiveIntensity={0.7}
+    />
+  );
+}
+
+/** Fresnel halo color/strength per body — omitted bodies have no atmosphere */
+const ATMOSPHERES: Record<string, { color: string; intensity: number }> = {
+  earth: { color: "#4a9eff", intensity: 0.6 },
+  venus: { color: "#e8a35f", intensity: 0.55 },
+  mars: { color: "#d27750", intensity: 0.35 },
+  jupiter: { color: "#d8a878", intensity: 0.4 },
+  saturn: { color: "#e3d3a3", intensity: 0.35 },
+  uranus: { color: "#9fe3e3", intensity: 0.5 },
+  neptune: { color: "#5a8cff", intensity: 0.55 },
+};
 
 function DetailPlanet({ planet }: { planet: PlanetData }) {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -90,13 +184,20 @@ function DetailPlanet({ planet }: { planet: PlanetData }) {
       <mesh ref={meshRef}>
         <sphereGeometry args={[radius, 96, 96]} />
         {isSun ? (
-          <meshBasicMaterial map={texture} toneMapped={false} />
+          <meshBasicMaterial map={texture} color={SUN_BLOOM_COLOR} toneMapped={false} />
+        ) : planet.id === "earth" ? (
+          <EarthMaterial map={texture} />
         ) : (
-          <meshStandardMaterial map={texture} roughness={0.92} metalness={0} />
+          <meshStandardMaterial
+            map={texture}
+            color={planet.tint ?? "#ffffff"}
+            roughness={0.92}
+            metalness={0}
+          />
         )}
       </mesh>
       {glowTexture && (
-        <sprite scale={[radius * 5.5, radius * 5.5, 1]}>
+        <sprite scale={[radius * 5.5, radius * 5.5, 1]} raycast={() => null}>
           <spriteMaterial
             map={glowTexture}
             transparent
@@ -106,7 +207,16 @@ function DetailPlanet({ planet }: { planet: PlanetData }) {
         </sprite>
       )}
       {planet.id === "earth" && <EarthClouds radius={radius} />}
-      {planet.id === "earth" && <Moon planetRadius={radius} />}
+      {ATMOSPHERES[planet.id] && (
+        <Atmosphere
+          radius={radius}
+          color={ATMOSPHERES[planet.id].color}
+          intensity={ATMOSPHERES[planet.id].intensity}
+        />
+      )}
+      {(DETAIL_MOONS[planet.id] ?? []).map((spec) => (
+        <MoonBody key={spec.name} spec={spec} planetRadius={radius} />
+      ))}
       {planet.hasRings && <SaturnRings planetRadius={radius} />}
     </group>
   );
@@ -139,6 +249,7 @@ export default function PlanetDetailScene() {
     isFirstApproach.current = false;
 
     setIsAnimating(true);
+    audio.whoosh();
     const [x, y, z] = PLANET_DETAIL.cameraPosition;
     // Ringed planets need extra distance — rings reach 2.3× the planet radius.
     // The Sun gets some too so its corona glow fits the frame.

@@ -3,6 +3,8 @@ import { Outfit, Space_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import CanvasWrapper from "@/components/canvas/CanvasWrapper";
+import GlobalControls from "@/components/ui/GlobalControls";
+import MotionProvider from "@/components/ui/MotionProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -30,9 +32,20 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Solar Odyssey",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://solar-odyssey.vercel.app"),
+  title: {
+    default: "Solar Odyssey — A 3D Journey Through the Solar System",
+    template: "%s",
+  },
   description:
     "A premium interactive 3D journey through the Solar System. Explore planets, discover real scientific data, and experience the scale of space.",
+  keywords: ["solar system", "3d", "planets", "space", "astronomy", "interactive", "education"],
+  openGraph: {
+    title: "Solar Odyssey",
+    description: "A premium interactive 3D journey through the Solar System.",
+    type: "website",
+    images: ["/gallery/saturn/1.webp"],
+  },
 };
 
 export default function RootLayout({
@@ -46,8 +59,11 @@ export default function RootLayout({
       className={`${outfit.variable} ${spaceMono.variable} ${synonym.variable}`}
     >
       <body className="bg-space-black text-white antialiased font-[family-name:var(--font-body)]">
-        <CanvasWrapper />
-        {children}
+        <MotionProvider>
+          <CanvasWrapper />
+          {children}
+          <GlobalControls />
+        </MotionProvider>
       </body>
     </html>
   );

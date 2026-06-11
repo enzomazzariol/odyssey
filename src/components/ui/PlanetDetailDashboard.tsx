@@ -8,6 +8,14 @@ import type { PlanetData } from "@/data/types";
 import { PLANETS, getBodyStats } from "@/data/planets";
 import { GALLERY } from "@/data/gallery";
 import GalleryOverlay from "@/components/ui/GalleryOverlay";
+import MoonInfoPanel from "@/components/ui/MoonInfoPanel";
+import {
+  useLang,
+  useT,
+  localizedDescription,
+  localizedFunFacts,
+  localizedClassification,
+} from "@/i18n";
 import { useStore } from "@/store";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
@@ -30,6 +38,8 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }) {
   const router = useRouter();
+  const lang = useLang();
+  const t = useT();
   const isAnimating = useStore((s) => s.isAnimating);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const photoCount = (GALLERY[planet.id] ?? []).length;
@@ -38,7 +48,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
   const index = PLANETS.findIndex((p) => p.id === planet.id);
   const prev = index === -1 ? PLANETS[PLANETS.length - 1] : PLANETS[(index - 1 + PLANETS.length) % PLANETS.length];
   const next = index === -1 ? PLANETS[0] : PLANETS[(index + 1) % PLANETS.length];
-  const stats = getBodyStats(planet);
+  const stats = getBodyStats(planet, lang);
 
   return (
     <>
@@ -63,7 +73,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">{t("systemOverview")}</span>
         </Link>
       </motion.div>
 
@@ -82,7 +92,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
               className="text-[12px] uppercase tracking-[0.45em] animate-pulse"
               style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
             >
-              Approaching
+              {t("approaching")}
             </span>
             <span
               className="text-2xl font-light tracking-[0.35em] uppercase text-white/90"
@@ -112,7 +122,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                 className="text-[10px] uppercase tracking-[0.4em]"
                 style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
               >
-                {planet.classification}
+                {localizedClassification(planet, lang)}
               </span>
               <h1
                 className="mt-3 text-5xl lg:text-6xl font-light tracking-[0.12em] uppercase text-white"
@@ -125,7 +135,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                 className="mt-5 text-[15px] leading-relaxed text-white/70 font-light"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                {planet.facts.description}
+                {localizedDescription(planet, lang)}
               </p>
 
               {photoCount > 0 && (
@@ -150,7 +160,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                     className="text-[11px] uppercase tracking-[0.3em] text-white/75 group-hover:text-white transition-colors duration-300"
                     style={{ fontFamily: "var(--font-mono)" }}
                   >
-                    Mission Archive · {photoCount} photos
+                    {t("missionArchive")} · {photoCount} {t("photos")}
                   </span>
                 </button>
               )}
@@ -167,10 +177,10 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                 className="text-[11px] uppercase tracking-[0.35em]"
                 style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
               >
-                Did you know
+                {t("didYouKnow")}
               </span>
               <ul className="mt-4 flex flex-col gap-5">
-                {planet.funFacts.map((fact, i) => (
+                {localizedFunFacts(planet, lang).map((fact, i) => (
                   <motion.li
                     key={i}
                     initial={{ opacity: 0, y: 10 }}
@@ -206,7 +216,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                   className="text-[11px] uppercase tracking-[0.4em]"
                   style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
                 >
-                  {planet.classification}
+                  {localizedClassification(planet, lang)}
                 </span>
                 <h1
                   className="text-3xl font-light tracking-[0.15em] uppercase text-white"
@@ -256,6 +266,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
       </AnimatePresence>
 
       <GalleryOverlay planet={planet} open={galleryOpen} onClose={() => setGalleryOpen(false)} />
+      <MoonInfoPanel />
     </>
   );
 }

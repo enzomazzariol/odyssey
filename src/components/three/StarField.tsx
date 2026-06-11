@@ -2,8 +2,31 @@
 
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { SCENE } from "@/lib/constants";
+
+function MilkyWay() {
+  const texture = useTexture("/textures/skybox/milkyway.webp");
+
+  useMemo(() => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+  }, [texture]);
+
+  return (
+    <mesh rotation={[0.35, 0, 0.25]}>
+      <sphereGeometry args={[450, 48, 48]} />
+      {/* Dimmed via color multiply so it reads as deep background, not wallpaper */}
+      <meshBasicMaterial
+        map={texture}
+        color="#566075"
+        side={THREE.BackSide}
+        depthWrite={false}
+        fog={false}
+      />
+    </mesh>
+  );
+}
 
 export default function StarField() {
   const pointsRef = useRef<THREE.Points>(null);
@@ -78,12 +101,15 @@ export default function StarField() {
   });
 
   return (
-    <points ref={pointsRef} material={shaderMaterial}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-aSize" args={[sizes, 1]} />
-        <bufferAttribute attach="attributes-aOpacity" args={[opacities, 1]} />
-      </bufferGeometry>
-    </points>
+    <group>
+      <MilkyWay />
+      <points ref={pointsRef} material={shaderMaterial}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+          <bufferAttribute attach="attributes-aSize" args={[sizes, 1]} />
+          <bufferAttribute attach="attributes-aOpacity" args={[opacities, 1]} />
+        </bufferGeometry>
+      </points>
+    </group>
   );
 }

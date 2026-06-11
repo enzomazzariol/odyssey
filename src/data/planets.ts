@@ -1,4 +1,5 @@
 import type { PlanetData } from "./types";
+import { UI, type Lang } from "@/i18n/ui";
 
 export const PLANETS: PlanetData[] = [
   {
@@ -267,33 +268,82 @@ export const SUN: PlanetData = {
   ],
 };
 
-/** All explorable bodies: the Sun + 8 planets */
-export const CELESTIAL_MAP = new Map([[SUN.id, SUN], ...PLANET_MAP]);
+export const PLUTO: PlanetData = {
+  id: "pluto",
+  classification: "Dwarf Planet",
+  name: "Pluto",
+  radius: 0.18,
+  orbitRadius: 68,
+  orbitSpeed: 0.0032,
+  rotationSpeed: -0.03,
+  axialTilt: 122.5,
+  initialAngle: 4.2,
+  accentColor: "#c9a386",
+  tint: "#c9a386",
+  hasRings: false,
+  facts: {
+    radiusKm: 1188,
+    distanceFromSunMkm: 5906,
+    dayLength: "6.4 Earth days",
+    yearLength: "248 Earth years",
+    avgTemp: "-229°C",
+    moons: 5,
+    gravity: 0.62,
+    description:
+      "The most famous dwarf planet, reclassified in 2006. An icy world of frozen-water mountains and a nitrogen heart — Sputnik Planitia.",
+  },
+  funFacts: [
+    "A year on Pluto lasts 248 Earth years — it hasn't completed one since its discovery in 1930.",
+    "Its moon Charon is so large that both orbit a point outside Pluto itself.",
+    "It has a heart-shaped glacier the size of Texas.",
+  ],
+};
+
+/** All explorable bodies: the Sun + 8 planets + Pluto (easter egg) */
+export const CELESTIAL_MAP = new Map([[SUN.id, SUN], ...PLANET_MAP, [PLUTO.id, PLUTO]]);
 
 export interface BodyStat {
   label: string;
   value: string;
 }
 
+/** Localize value strings like "24.6 hours" / "11.9 Earth years" */
+export function localizeFactValue(value: string, lang: Lang): string {
+  return lang === "es" ? esValue(value) : value;
+}
+
+function esValue(value: string): string {
+  return value
+    .replace("Earth days", "días terrestres")
+    .replace("Earth years", "años terrestres")
+    .replace("Earth day", "día terrestre")
+    .replace("hours", "horas")
+    .replace("days", "días")
+    .replace("years", "años")
+    .replace(" surface", " superficie");
+}
+
 /** Display stats — the Sun gets star-specific labels instead of planet ones */
-export function getBodyStats(body: PlanetData): BodyStat[] {
+export function getBodyStats(body: PlanetData, lang: Lang = "en"): BodyStat[] {
+  const t = UI[lang];
+  const v = lang === "es" ? esValue : (x: string) => x;
   if (body.id === "sun") {
     return [
-      { label: "Radius", value: `${body.facts.radiusKm.toLocaleString()} km` },
-      { label: "Light to Earth", value: "8 min 20 s" },
-      { label: "Rotation", value: body.facts.dayLength },
-      { label: "Galactic Orbit", value: body.facts.yearLength.replace("*", "") },
-      { label: "Surface Temp", value: body.facts.avgTemp.replace(" surface", "") },
-      { label: "Gravity", value: `${body.facts.gravity} m/s²` },
+      { label: t.statRadius, value: `${body.facts.radiusKm.toLocaleString()} km` },
+      { label: t.statLightToEarth, value: "8 min 20 s" },
+      { label: t.statRotation, value: v(body.facts.dayLength) },
+      { label: t.statGalacticOrbit, value: v(body.facts.yearLength.replace("*", "")) },
+      { label: t.statSurfaceTemp, value: v(body.facts.avgTemp.replace(" surface", "")) },
+      { label: t.statGravity, value: `${body.facts.gravity} m/s²` },
     ];
   }
   return [
-    { label: "Radius", value: `${body.facts.radiusKm.toLocaleString()} km` },
-    { label: "From Sun", value: `${body.facts.distanceFromSunMkm.toLocaleString()} M km` },
-    { label: "Day", value: body.facts.dayLength },
-    { label: "Year", value: body.facts.yearLength },
-    { label: "Avg Temp", value: body.facts.avgTemp },
-    { label: "Gravity", value: `${body.facts.gravity} m/s²` },
-    { label: "Moons", value: String(body.facts.moons) },
+    { label: t.statRadius, value: `${body.facts.radiusKm.toLocaleString()} km` },
+    { label: t.statFromSun, value: `${body.facts.distanceFromSunMkm.toLocaleString()} M km` },
+    { label: t.statDay, value: v(body.facts.dayLength) },
+    { label: t.statYear, value: v(body.facts.yearLength) },
+    { label: t.statAvgTemp, value: v(body.facts.avgTemp) },
+    { label: t.statGravity, value: `${body.facts.gravity} m/s²` },
+    { label: t.statMoonsLabel, value: String(body.facts.moons) },
   ];
 }

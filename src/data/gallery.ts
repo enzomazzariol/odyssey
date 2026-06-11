@@ -142,6 +142,13 @@ export const GALLERY: Record<string, GalleryImage[]> = {
       credit: "NASA / JPL-Caltech",
     },
   ],
+  pluto: [
+    {
+      src: "/gallery/pluto/1.webp",
+      caption: "Pluto in true color by New Horizons, 2015 — its heart-shaped glacier is Sputnik Planitia.",
+      credit: "NASA / JHUAPL / SwRI",
+    },
+  ],
   neptune: [
     {
       src: "/gallery/neptune/1.webp",

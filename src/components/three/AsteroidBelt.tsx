@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useStore } from "@/store";
 
 const COUNT = 2200;
 const INNER = 27;
@@ -67,7 +68,7 @@ export default function AsteroidBelt() {
 
   useFrame((_, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.0045;
+      groupRef.current.rotation.y -= delta * 0.0045 * useStore.getState().timeScale;
     }
   });
 

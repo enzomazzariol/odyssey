@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PlanetData } from "@/data/types";
 import { GALLERY } from "@/data/gallery";
+import { useLang, useT, localizedCaption } from "@/i18n";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
@@ -19,6 +20,8 @@ export default function GalleryOverlay({
 }) {
   const images = GALLERY[planet.id] ?? [];
   const [index, setIndex] = useState(0);
+  const lang = useLang();
+  const t = useT();
 
   useEffect(() => {
     if (open) setIndex(0);
@@ -62,7 +65,7 @@ export default function GalleryOverlay({
                 className="text-[11px] uppercase tracking-[0.4em]"
                 style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
               >
-                Mission Archive
+                {t("missionArchive")}
               </span>
               <h2
                 className="text-2xl font-light tracking-[0.2em] uppercase text-white"
@@ -151,7 +154,7 @@ export default function GalleryOverlay({
                   className="text-[15px] text-white/85 font-light max-w-2xl"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
-                  {image.caption}
+                  {localizedCaption(image, lang)}
                 </p>
                 <span
                   className="text-[11px] tracking-[0.2em] uppercase text-white/45"

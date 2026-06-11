@@ -10,3 +10,8 @@ export const useStore = create<AppStore>()((...a) => ({
   ...createCameraSlice(...a),
   ...createLoadingSlice(...a),
 }));
+
+// Dev-only: expose store for debugging
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  (window as unknown as { __store?: typeof useStore }).__store = useStore;
+}
