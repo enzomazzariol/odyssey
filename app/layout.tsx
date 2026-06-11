@@ -10,14 +10,15 @@ const outfit = Outfit({
   display: "swap",
 });
 
-const melodrama = localFont({
+const synonym = localFont({
   src: [
-    { path: "../src/fonts/melodrama-400.woff2", weight: "400" },
-    { path: "../src/fonts/melodrama-500.woff2", weight: "500" },
-    { path: "../src/fonts/melodrama-600.woff2", weight: "600" },
-    { path: "../src/fonts/melodrama-700.woff2", weight: "700" },
+    { path: "../src/fonts/synonym-300.woff2", weight: "300" },
+    { path: "../src/fonts/synonym-400.woff2", weight: "400" },
+    { path: "../src/fonts/synonym-500.woff2", weight: "500" },
+    { path: "../src/fonts/synonym-600.woff2", weight: "600" },
+    { path: "../src/fonts/synonym-700.woff2", weight: "700" },
   ],
-  variable: "--font-melodrama",
+  variable: "--font-synonym",
   display: "swap",
 });
 
@@ -42,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${spaceMono.variable} ${melodrama.variable}`}
+      className={`${outfit.variable} ${spaceMono.variable} ${synonym.variable}`}
     >
       <body className="bg-space-black text-white antialiased font-[family-name:var(--font-body)]">
         <CanvasWrapper />

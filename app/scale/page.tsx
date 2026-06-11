@@ -84,7 +84,7 @@ export default function ScalePage() {
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[10px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
         </Link>
         <div className="flex flex-col items-end gap-1">
           <span
@@ -114,7 +114,7 @@ export default function ScalePage() {
             className="flex flex-col items-center gap-2"
           >
             <span
-              className="text-[9px] uppercase tracking-[0.4em]"
+              className="text-[11px] uppercase tracking-[0.4em]"
               style={{ fontFamily: "var(--font-mono)", color: body.accentColor }}
             >
               {body.classification}
@@ -127,14 +127,14 @@ export default function ScalePage() {
             </h2>
             <div className="flex items-center gap-4 mt-1">
               <span
-                className="text-[11px] tracking-[0.15em] text-white/55"
+                className="text-[13px] tracking-[0.15em] text-white/65"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 R = {body.facts.radiusKm.toLocaleString()} km
               </span>
               <span className="w-px h-3 bg-white/20" />
               <span
-                className="text-[11px] tracking-[0.15em]"
+                className="text-[13px] tracking-[0.15em]"
                 style={{ fontFamily: "var(--font-mono)", color: body.accentColor }}
               >
                 {ratioLabel}
@@ -194,7 +194,7 @@ export default function ScalePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}
         transition={{ duration: 1, delay: 2.5 }}
-        className="fixed bottom-8 right-8 z-20 text-[9px] uppercase tracking-[0.3em] text-white/30 pointer-events-none hidden md:block"
+        className="fixed bottom-8 right-8 z-20 text-[11px] uppercase tracking-[0.3em] text-white/45 pointer-events-none hidden md:block"
         style={{ fontFamily: "var(--font-mono)" }}
       >
         Scroll to travel

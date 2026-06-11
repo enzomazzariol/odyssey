@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { PlanetData } from "@/data/types";
 import { PLANETS, getBodyStats } from "@/data/planets";
+import { GALLERY } from "@/data/gallery";
+import GalleryOverlay from "@/components/ui/GalleryOverlay";
 import { useStore } from "@/store";
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
@@ -13,12 +16,12 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span
-        className="text-[9px] uppercase tracking-[0.25em] text-white/35"
+        className="text-[11px] uppercase tracking-[0.25em] text-white/55"
         style={{ fontFamily: "var(--font-mono)" }}
       >
         {label}
       </span>
-      <span className="text-base text-white/90 font-light" style={{ fontFamily: "var(--font-body)" }}>
+      <span className="text-[17px] text-white/90 font-light" style={{ fontFamily: "var(--font-body)" }}>
         {value}
       </span>
     </div>
@@ -28,6 +31,8 @@ function Stat({ label, value }: { label: string; value: string }) {
 export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }) {
   const router = useRouter();
   const isAnimating = useStore((s) => s.isAnimating);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const photoCount = (GALLERY[planet.id] ?? []).length;
 
   // The Sun sits before Mercury in the journey: prev wraps to Neptune, next is Mercury
   const index = PLANETS.findIndex((p) => p.id === planet.id);
@@ -58,7 +63,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[10px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
         </Link>
       </motion.div>
 
@@ -74,7 +79,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
             className="fixed bottom-16 inset-x-0 z-20 flex flex-col items-center gap-3 pointer-events-none"
           >
             <span
-              className="text-[10px] uppercase tracking-[0.45em] animate-pulse"
+              className="text-[12px] uppercase tracking-[0.45em] animate-pulse"
               style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
             >
               Approaching
@@ -117,11 +122,38 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
               </h1>
               <div className="mt-5 h-px w-24 bg-gradient-to-r from-white/30 to-transparent" />
               <p
-                className="mt-5 text-sm leading-relaxed text-white/55 font-light"
+                className="mt-5 text-[15px] leading-relaxed text-white/70 font-light"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {planet.facts.description}
               </p>
+
+              {photoCount > 0 && (
+                <button
+                  onClick={() => setGalleryOpen(true)}
+                  className="group pointer-events-auto mt-7 flex items-center gap-3 border px-5 py-3 cursor-pointer transition-all duration-500 hover:bg-white/[0.04]"
+                  style={{ borderColor: `${planet.accentColor}40` }}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    style={{ color: planet.accentColor }}
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                  >
+                    <rect x="1.5" y="3" width="13" height="10" />
+                    <path d="M1.5 10.5L5 7l3 3 2.5-2.5L14.5 11" />
+                    <circle cx="11" cy="6" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                  <span
+                    className="text-[11px] uppercase tracking-[0.3em] text-white/75 group-hover:text-white transition-colors duration-300"
+                    style={{ fontFamily: "var(--font-mono)" }}
+                  >
+                    Mission Archive · {photoCount} photos
+                  </span>
+                </button>
+              )}
             </motion.section>
 
             {/* Right panel — did you know */}
@@ -132,7 +164,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
               className="fixed right-8 top-1/2 -translate-y-1/2 z-20 w-[280px] hidden lg:block"
             >
               <span
-                className="text-[9px] uppercase tracking-[0.35em]"
+                className="text-[11px] uppercase tracking-[0.35em]"
                 style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
               >
                 Did you know
@@ -151,7 +183,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                       style={{ background: planet.accentColor }}
                     />
                     <p
-                      className="text-[13px] leading-relaxed text-white/55 font-light"
+                      className="text-[15px] leading-relaxed text-white/70 font-light"
                       style={{ fontFamily: "var(--font-body)" }}
                     >
                       {fact}
@@ -171,7 +203,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
               {/* Mobile: name above the bar */}
               <div className="md:hidden mb-4">
                 <span
-                  className="text-[9px] uppercase tracking-[0.4em]"
+                  className="text-[11px] uppercase tracking-[0.4em]"
                   style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
                 >
                   {planet.classification}
@@ -202,7 +234,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                     <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
                       <path d="M10 3L5 8l5 5" />
                     </svg>
-                    <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em]">{prev.name}</span>
+                    <span className="hidden lg:inline text-[11px] uppercase tracking-[0.25em]">{prev.name}</span>
                   </button>
                   <div className="h-4 w-px bg-white/15" />
                   <button
@@ -211,7 +243,7 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
                     style={{ fontFamily: "var(--font-mono)" }}
                     aria-label={`Next: ${next.name}`}
                   >
-                    <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em]">{next.name}</span>
+                    <span className="hidden lg:inline text-[11px] uppercase tracking-[0.25em]">{next.name}</span>
                     <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
                       <path d="M6 3l5 5-5 5" />
                     </svg>
@@ -222,6 +254,8 @@ export default function PlanetDetailDashboard({ planet }: { planet: PlanetData }
           </motion.div>
         )}
       </AnimatePresence>
+
+      <GalleryOverlay planet={planet} open={galleryOpen} onClose={() => setGalleryOpen(false)} />
     </>
   );
 }

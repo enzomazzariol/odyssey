@@ -11,7 +11,7 @@ function Stat({ label, value, accent }: { label: string; value: string; accent: 
   return (
     <div className="flex flex-col gap-1.5 border-l pl-4" style={{ borderColor: `${accent}33` }}>
       <span
-        className="text-[10px] uppercase tracking-[0.25em] text-white/40"
+        className="text-[11px] uppercase tracking-[0.25em] text-white/55"
         style={{ fontFamily: "var(--font-mono)" }}
       >
         {label}
@@ -123,7 +123,7 @@ export default function PlanetInfoPanel() {
               <div className="mt-7">
                 <div className="flex items-baseline justify-between">
                   <span
-                    className="text-[10px] uppercase tracking-[0.25em] text-white/40"
+                    className="text-[11px] uppercase tracking-[0.25em] text-white/55"
                     style={{ fontFamily: "var(--font-mono)" }}
                   >
                     Size vs Earth
@@ -168,13 +168,13 @@ export default function PlanetInfoPanel() {
                 style={{ borderColor: `${planet.accentColor}26`, background: `${planet.accentColor}0a` }}
               >
                 <span
-                  className="text-[10px] uppercase tracking-[0.3em]"
+                  className="text-[11px] uppercase tracking-[0.3em]"
                   style={{ fontFamily: "var(--font-mono)", color: planet.accentColor }}
                 >
                   Did you know
                 </span>
                 <p
-                  className="mt-2 text-sm leading-relaxed text-white/65 font-light"
+                  className="mt-2 text-[15px] leading-relaxed text-white/75 font-light"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {planet.funFacts[0]}

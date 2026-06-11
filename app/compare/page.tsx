@@ -26,7 +26,7 @@ function BodySelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-space-black/70 backdrop-blur-md border px-5 py-2.5 pr-10 text-[11px] uppercase tracking-[0.3em] text-white/85 cursor-pointer outline-none transition-colors duration-300 hover:border-white/40"
+        className="appearance-none bg-space-black/70 backdrop-blur-md border px-5 py-2.5 pr-10 text-[13px] uppercase tracking-[0.3em] text-white/90 cursor-pointer outline-none transition-colors duration-300 hover:border-white/40"
         style={{ fontFamily: "var(--font-mono)", borderColor: `${accent}40` }}
       >
         {ALL_BODIES.map((b) => (
@@ -133,7 +133,7 @@ export default function ComparePage() {
           >
             <path d="M13 8H3M7 4L3 8l4 4" />
           </svg>
-          <span className="text-[10px] uppercase tracking-[0.3em]">System Overview</span>
+          <span className="text-[11px] uppercase tracking-[0.3em]">System Overview</span>
         </Link>
         <div className="flex flex-col items-end gap-1">
           <span
@@ -160,7 +160,7 @@ export default function ComparePage() {
       >
         <BodySelect value={compareA} onChange={setCompareA} exclude={compareB} accent={a.accentColor} />
         <span
-          className="text-[10px] uppercase tracking-[0.3em] text-white/35"
+          className="text-[12px] uppercase tracking-[0.3em] text-white/50"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           vs
@@ -177,7 +177,7 @@ export default function ComparePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-[11px] tracking-[0.2em] text-white/45 uppercase text-center"
+            className="text-[13px] tracking-[0.2em] text-white/60 uppercase text-center"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {factor < 1.05 ? (
@@ -225,10 +225,10 @@ export default function ComparePage() {
           {buildRows(a, b).map((row) => (
             <div
               key={row.label}
-              className="grid grid-cols-[1fr_auto_1fr] items-baseline gap-6 py-1.5"
+              className="grid grid-cols-[1fr_auto_1fr] items-baseline gap-6 py-2"
             >
               <span
-                className="text-right text-[12px] font-light transition-colors duration-500"
+                className="text-right text-[15px] font-light transition-colors duration-500"
                 style={{
                   fontFamily: "var(--font-body)",
                   color: row.winner === 1 ? a.accentColor : "rgba(255,255,255,0.75)",
@@ -237,13 +237,13 @@ export default function ComparePage() {
                 {row.a}
               </span>
               <span
-                className="text-[8px] uppercase tracking-[0.3em] text-white/30 w-36 text-center"
+                className="text-[11px] uppercase tracking-[0.3em] text-white/55 w-44 text-center"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {row.label}
               </span>
               <span
-                className="text-left text-[12px] font-light transition-colors duration-500"
+                className="text-left text-[15px] font-light transition-colors duration-500"
                 style={{
                   fontFamily: "var(--font-body)",
                   color: row.winner === -1 ? b.accentColor : "rgba(255,255,255,0.75)",

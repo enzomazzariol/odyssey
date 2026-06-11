@@ -56,6 +56,7 @@ src/data/               → Static planet data and types
 src/hooks/              → Custom hooks (camera animation, texture loading)
 src/lib/                → Constants, utilities
 public/textures/        → Planet textures (NASA, WebP format)
+public/gallery/         → Real mission photos per body (NASA/ESA via Wikimedia, WebP)
 ```
 
 ## Conventions

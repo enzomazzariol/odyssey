@@ -45,14 +45,14 @@ export default function ExplorePage() {
         <nav className="pointer-events-auto flex items-center gap-6 mt-1">
           <Link
             href="/scale"
-            className="text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-white transition-colors duration-300"
+            className="text-[11px] uppercase tracking-[0.3em] text-white/55 hover:text-white transition-colors duration-300"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Scale
           </Link>
           <Link
             href="/compare"
-            className="text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-white transition-colors duration-300"
+            className="text-[11px] uppercase tracking-[0.3em] text-white/55 hover:text-white transition-colors duration-300"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             Compare
@@ -79,7 +79,7 @@ export default function ExplorePage() {
                 {hovered.name}
               </span>
               <span
-                className="text-[10px] uppercase tracking-[0.3em] text-white/40"
+                className="text-[12px] uppercase tracking-[0.3em] text-white/55"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 Click to scan
@@ -94,7 +94,7 @@ export default function ExplorePage() {
               animate={{ opacity: 0.3 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1, delay: 2 }}
-              className="text-[10px] uppercase tracking-[0.35em] text-white/30"
+              className="text-[11px] uppercase tracking-[0.35em] text-white/50"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               Drag to orbit · Scroll to zoom · Click a planet
